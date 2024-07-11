@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  wazuh-agent1:
+    build: .
+    container_name: wazuh-agent1
+    environment:
+      - WAZUH_MANAGER_IP=wazuh-manager
+    networks:
+      - monitoring-network
+    depends_on:
+      - wazuh-manager
+
+  zeek1:
+    build: .
+    container_name: zeek1
+    volumes:
+      - ./zeek/logs:/usr/local/zeek/logs
+    command: "zeek -i eth0 local"
+    networks:
+      - monitoring-network
+    depends_on:
+      - wazuh-agent1
+
+networks:
+  monitoring-network:
+    external: true
